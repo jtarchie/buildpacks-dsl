@@ -1,3 +1,4 @@
 #!/usr/bin/env bash
 
-./bin/buildpack detect $*
+buildpack_path=$(dirname $(dirname $0))
+$buildpack_path/bin/buildpack detect $*
