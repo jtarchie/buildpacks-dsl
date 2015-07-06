@@ -3,7 +3,13 @@ require 'fileutils'
 module Buildpack
   module DSL
     module Recipes
-      Recipe = Struct.new(:name) do
+      class Recipe
+        attr_reader :name
+
+        def initialize(name)
+          @name = name
+        end
+
         def which(command)
           `which #{command}`
         end
@@ -43,6 +49,14 @@ module Buildpack
           @dependencies || []
         end
 
+        def download(url, options = {})
+          full_path = "#{options[:to]}/#{File.basename(url)}"
+          system(<<-EOF)
+            curl -s --fail --retry 3 #{url} -o #{full_path}
+            tar xzf #{full_path} -C #{options[:to]}
+          EOF
+        end
+
         private
 
         def write_env(build_dir)
@@ -52,7 +66,7 @@ module Buildpack
             FileUtils.mkdir_p('.profile.d')
             File.write('.profile.d/000_setup.sh', @environment.collect do |key, value|
               "export #{key}=#{value}"
-            end.join("\n"))
+            end.join("\n") + "\n", mode: 'a')
           end
         end
       end

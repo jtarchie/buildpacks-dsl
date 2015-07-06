@@ -14,7 +14,7 @@ RSpec.configure do
 
   def compile_buildpack(fixture_name)
     %x{
-      docker rm -f test-buildpack
+      docker rm -f test-buildpack || true
       docker run -dit \
         --name test-buildpack \
         -v `pwd`:/buildpack:ro \
