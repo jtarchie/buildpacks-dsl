@@ -50,6 +50,7 @@ module Buildpack
         end
 
         def download(url, options = {})
+          FileUtils.mkdir_p(options[:to])
           full_path = "#{options[:to]}/#{File.basename(url)}"
           system(<<-EOF)
             curl -s --fail --retry 3 #{url} -o #{full_path}

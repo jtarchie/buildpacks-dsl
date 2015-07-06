@@ -13,7 +13,6 @@ module Buildpack::DSL::Recipes
       contents = File.read(gem_file_path)
       instance_eval(contents, gem_file_path.to_s, 1)
 
-      FileUtils.mkdir_p(File.join(build_dir, 'vendor', 'ruby'))
       download "https://pivotal-buildpacks.s3.amazonaws.com/ruby/binaries/cflinuxfs2/ruby-#{@ruby_version}.tgz",
         :to => "#{build_dir}/vendor/ruby"
 
