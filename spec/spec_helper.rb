@@ -9,21 +9,21 @@ RSpec.configure do
   end
 
   def bprun(cmd)
-    run "source /tmp/fixtures/ruby/.profile.d/*.sh && #{cmd}"
+    run "cd /tmp/fixtures && source /tmp/fixtures/.profile.d/*.sh && #{cmd}"
   end
 
   def compile_buildpack(fixture_name)
     %x{
-      docker rm -f test-buildpack || true
+      docker rm -f test-buildpack
       docker run -dit \
         --name test-buildpack \
         -v `pwd`:/buildpack:ro \
         -w /buildpack \
-        -e HOME="/tmp/fixtures/#{fixture_name}" \
+        -e HOME="/tmp/fixtures" \
         -u www-data \
         cloudfoundry/cflinuxfs2 bash
     }
-    run('cp -R /buildpack/spec/fixtures /tmp/fixtures')
-    @output = run("/buildpack/bin/compile /tmp/fixtures/#{fixture_name} /tmp/cache")
+    run("cp -R /buildpack/spec/fixtures/#{fixture_name} /tmp/fixtures")
+    @output = run("/buildpack/bin/compile /tmp/fixtures /tmp/cache")
   end
 end
